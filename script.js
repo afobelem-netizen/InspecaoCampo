@@ -8,6 +8,11 @@ const REPO_NAME = "NOME_DO_REPOSITORIO";
 const FILE_PATH = "InspecaoCampo/dadosInspecao.json";
 const BRANCH = "main";
 
+// Função UTF-8 segura para Base64
+function encodeBase64(str) {
+  return btoa(unescape(encodeURIComponent(str)));
+}
+
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -19,39 +24,45 @@ form.addEventListener("submit", async (e) => {
   mensagem.textContent = "Salvando no GitHub...";
 
   try {
-    // 1️⃣ Buscar o arquivo existente para pegar o sha
+    // 1️⃣ Buscar o arquivo existente
     const getFile = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}?ref=${BRANCH}`, {
-      headers: {
-        Authorization: `token ${GITHUB_TOKEN}`,
-      }
+      headers: { Authorization: `token ${GITHUB_TOKEN}` }
     });
-    const fileData = await getFile.json();
-    const sha = fileData.sha;
 
-    // 2️⃣ Atualizar arquivo JSON
-    const existingData = JSON.parse(atob(fileData.content));
+    const fileData = await getFile.json();
+
+    let existingData = [];
+    let sha;
+
+    if (!fileData.message) { // arquivo existe
+      sha = fileData.sha;
+      existingData = JSON.parse(atob(fileData.content));
+    }
+
     existingData.push(inspecao);
+
+    // 2️⃣ Atualizar ou criar arquivo
+    const updateBody = {
+      message: "Nova inspeção de campo",
+      content: encodeBase64(JSON.stringify(existingData, null, 2)),
+      branch: BRANCH
+    };
+
+    if (sha) updateBody.sha = sha;
 
     const updateResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
       method: "PUT",
-      headers: {
-        Authorization: `token ${GITHUB_TOKEN}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        message: "Nova inspeção de campo",
-        content: btoa(JSON.stringify(existingData, null, 2)),
-        sha: sha,
-        branch: BRANCH
-      })
+      headers: { Authorization: `token ${GITHUB_TOKEN}` },
+      body: JSON.stringify(updateBody)
     });
 
     if (updateResponse.ok) {
       mensagem.textContent = "✅ Inspeção salva no GitHub!";
       form.reset();
     } else {
-      mensagem.textContent = "❌ Erro ao salvar no GitHub.";
-      console.error(await updateResponse.json());
+      const erro = await updateResponse.json();
+      mensagem.textContent = `❌ Erro ao salvar: ${erro.message}`;
+      console.error(erro);
     }
 
   } catch (err) {
