@@ -2,9 +2,9 @@ const form = document.getElementById("formInspecao");
 const mensagem = document.getElementById("mensagem");
 
 // CONFIGURAÇÃO: substitua pelos seus dados
-const GITHUB_TOKEN = "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";
+const GITHUB_TOKEN = "SEU_NOVO_TOKEN_AQUI"; // ⚠️ Gere um novo token
 const REPO_OWNER = "afobelem-netizen";
-const REPO_NAME = "InspecaCampo";
+const REPO_NAME = "InspecaCampo"; // confere se o nome tá certinho!
 const FILE_PATH = "InspecaoCampo/dadosInspecao.json";
 const BRANCH = "main";
 
@@ -26,7 +26,7 @@ form.addEventListener("submit", async (e) => {
   try {
     // 1️⃣ Buscar o arquivo existente
     const getFile = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}?ref=${BRANCH}`, {
-      headers: { Authorization: `token ${GITHUB_TOKEN}` }
+      headers: { Authorization: `Bearer ${GITHUB_TOKEN}` }
     });
 
     const fileData = await getFile.json();
@@ -52,7 +52,10 @@ form.addEventListener("submit", async (e) => {
 
     const updateResponse = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
       method: "PUT",
-      headers: { Authorization: `token ${GITHUB_TOKEN}` },
+      headers: { 
+        Authorization: `Bearer ${GITHUB_TOKEN}`,
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify(updateBody)
     });
 
