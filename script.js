@@ -2,7 +2,7 @@ const form = document.getElementById("formInspecao");
 const mensagem = document.getElementById("mensagem");
 
 // 🔑 Coloque seu token aqui (entre aspas)
-const GITHUB_TOKEN = "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";  
+const GITHUB_TOKEN = "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";  
 const REPO_OWNER = "afobelem-netizen";  
 const REPO_NAME = "InspecaCampo";  
 const FILE_PATH = "InspecaoCampo/dadosInspecao.json";  
