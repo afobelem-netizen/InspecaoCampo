@@ -2,9 +2,9 @@ const form = document.getElementById("formInspecao");
 const mensagem = document.getElementById("mensagem");
 
 // CONFIGURAÇÃO: substitua pelos seus dados
-const GITHUB_TOKEN = "SEU_TOKEN_AQUI";
-const REPO_OWNER = "SEU_USUARIO";
-const REPO_NAME = "NOME_DO_REPOSITORIO";
+const GITHUB_TOKEN = "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";
+const REPO_OWNER = "afobelem-netizen";
+const REPO_NAME = "InspecaCampo";
 const FILE_PATH = "InspecaoCampo/dadosInspecao.json";
 const BRANCH = "main";
 
