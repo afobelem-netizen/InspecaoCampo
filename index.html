@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Inspeções Online (via Issues)</title>
+<title>Inspeções Online</title>
 <style>
   body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
   input, textarea, button { display: block; margin: 10px 0; padding: 8px; width: 100%; }
@@ -28,30 +28,23 @@
 <div class="resultado" id="resultado"></div>
 
 <script>
-const usuario = "SEU_USUARIO";   // <-- troque pelo seu usuário
-const repo = "SEU_REPOSITORIO"; // <-- troque pelo nome do repositório
+const usuario = "SEU_USUARIO";   // troque pelo seu usuário
+const repo = "SEU_REPOSITORIO"; // troque pelo nome do repositório
 
-// --- Cadastro como Issue ---
-document.getElementById("formInspecao").addEventListener("submit", async function(e) {
+// --- Cadastro redirecionando para GitHub ---
+document.getElementById("formInspecao").addEventListener("submit", function(e) {
     e.preventDefault();
 
-    const titulo = `Inspeção em ${document.getElementById("local").value} - ${document.getElementById("data").value}`;
-    const corpo = `
-Data: ${document.getElementById("data").value}
+    const titulo = encodeURIComponent(`Inspeção - ${document.getElementById("local").value} - ${document.getElementById("data").value}`);
+    const corpo = encodeURIComponent(
+`Data: ${document.getElementById("data").value}
 Local: ${document.getElementById("local").value}
 Responsável: ${document.getElementById("responsavel").value}
-Observações: ${document.getElementById("observacoes").value}
-    `;
+Observações: ${document.getElementById("observacoes").value}`
+    );
 
-    const url = `https://api.github.com/repos/${usuario}/${repo}/issues`;
-
-    // Aqui, sem autenticação, a criação pública não funciona direto.
-    // Solução: habilitar GitHub Forms ou usar GitHub Discussions (público).
-    // Para testes, mostra no console o que seria enviado.
-    console.log("Nova inspeção:", {title: titulo, body: corpo});
-
-    alert("Inspeção registrada (simulação). Para funcionar, precisa ativar GitHub Forms ou backend.");
-    this.reset();
+    const url = `https://github.com/${usuario}/${repo}/issues/new?title=${titulo}&body=${corpo}`;
+    window.open(url, "_blank"); // abre em nova aba
 });
 
 // --- Pesquisa de Issues ---
